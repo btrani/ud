@@ -14,5 +14,7 @@ To use this script, download three files:
   * Place the following lines in this file:
     * [themoviedb.org]
     * Key = "YOUR API KEY"
-  * This file should be placed in the same folder as the other python scripts.
+  * This file should be placed in the same directory as the other python scripts.
 3. fresh_tomatoes.py
+
+To generate an html page of the current top rated movies, run entertainment.py. This will create a new file in the same directory and automatically open a new browser window displaying your page. Each box is clickable, which will bring up the movie's English trailer on Youtube. Depending on the current list, some movies may not have an English trailer available.
