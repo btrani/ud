@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Fresh Tomatoes!</title>
+    <!-- Bootstrap 3 -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <style type="text/css" media="screen">
+        body {
+            padding-top: 80px;
+        }
+        #trailer .modal-dialog {
+            margin-top: 200px;
+            width: 640px;
+            height: 480px;
+        }
+        .hanging-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            z-index: 9001;
+        }
+        #trailer-video {
+            width: 100%;
+            height: 100%;
+        }
+        .movie-tile {
+            margin-bottom: 20px;
+            padding-top: 20px;
+        }
+        .movie-tile:hover {
+            background-color: #EEE;
+            cursor: pointer;
+        }
+        .scale-media {
+            padding-bottom: 56.25%;
+            position: relative;
+        }
+        .scale-media iframe {
+            border: none;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            background-color: white;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        // Pause the video when the modal is closed
+        $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
+            // Remove the src so the player itself gets removed, as this is the only
+            // reliable way to ensure the video stops playing in IE
+            $("#trailer-video-container").empty();
+        });
+        // Start playing the video whenever the trailer modal is opened
+        $(document).on('click', '.movie-tile', function (event) {
+            var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
+            var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+            $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+              'id': 'trailer-video',
+              'type': 'text-html',
+              'src': sourceUrl,
+              'frameborder': 0
+            }));
+        });
+        // Animate in the movies when the page loads
+        $(document).ready(function () {
+          $('.movie-tile').hide().first().show("fast", function showNext() {
+            $(this).next("div").show("fast", showNext);
+          });
+        });
+    </script>
+</head>
+
+  <body>
+    <!-- Trailer Video Modal -->
+    <div class="modal" id="trailer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+            <img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+          </a>
+          <div class="scale-media" id="trailer-video-container">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Main Page Content -->
+    <div class="container">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Fresh Tomatoes Movie Trailers</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="WawU4ouldxU" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg" width="220" height="342">
+    <h3>The Shawshank Redemption</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="7d_jQycdQGo" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//lIv1QinFqz4dlp5U4lQ6HaiskOZ.jpg" width="220" height="342">
+    <h3>Whiplash</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="sY1S34973zA" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//d4KNaTrltq6bpkFS01pYtyXa09m.jpg" width="220" height="342">
+    <h3>The Godfather</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="_jGXcSBcvQQ" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//ynXoOxmDHNQ4UAy0oU6avW71HVW.jpg" width="220" height="342">
+    <h3>Spirited Away</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="Rt2LHkSwdPQ" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" width="220" height="342">
+    <h3>Interstellar</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="0RqDiYnFxTk" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//4mFsNQwbD0F237Tx7gAPotd0nbJ.jpg" width="220" height="342">
+    <h3>The Intouchables</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="9O1Iy9od7-A" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//tHbMIIF51rguMNSastqoQwR0sBs.jpg" width="220" height="342">
+    <h3>The Godfather: Part II</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="bJcLRFWxRno" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//yPisjyLweCl1tbgwgtzBCNCBle.jpg" width="220" height="342">
+    <h3>Schindler's List</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="None" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//bwVhmPpydv8P7mWfrmL3XVw0MV5.jpg" width="220" height="342">
+    <h3>Grave of the Fireflies</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="SUXWAEX2jlg" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//811DjJTon9gD6hZ8nCjSitaIXFQ.jpg" width="220" height="342">
+    <h3>Fight Club</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="GVx5K8WfFJY" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//1hRoyzDtpgMU7Dz4JF22RANzQO7.jpg" width="220" height="342">
+    <h3>The Dark Knight</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="pAYEQP8gx3w" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//f7DImXDebOs148U4uPjI61iDvaK.jpg" width="220" height="342">
+    <h3>Life Is Beautiful</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="E_Ci-pAL4eE" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//eqFckcHuFCT1FrzLOAvXBb4jHwq.jpg" width="220" height="342">
+    <h3>Room</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="s7EdQ4FqbhY" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//dM2w364MScsjFf8pfMbaWUcWrR.jpg" width="220" height="342">
+    <h3>Pulp Fiction</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="bLvqoHBptjg" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//z4ROnCrL77ZMzT0MsNXY5j25wS2.jpg" width="220" height="342">
+    <h3>Forrest Gump</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="yRUAzGQ3nSY" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//aAmfIX3TT40zUHGcCKrlOZRKC7u.jpg" width="220" height="342">
+    <h3>Inside Out</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="qo5jJpHtI1Y" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//pwpGfTImTGifEGgLb3s6LRPd4I6.jpg" width="220" height="342">
+    <h3>Goodfellas</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="8V4dEWPJKNk" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//5hqbJSmtAimbaP3XcYshCixuUtk.jpg" width="220" height="342">
+    <h3>Seven Samurai</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="OvebOqneLIU" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//qcL1YfkCxfhsdO6sDDJ0PpzMF9n.jpg" width="220" height="342">
+    <h3>12 Angry Men</h3>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="f5AdVp39snM" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/original//qJ9ouIj4wN24asvKTUSAcJnSfrT.jpg" width="220" height="342">
+    <h3>Feast</h3>
+</div>
+
+    </div>
+  </body>
+</html>
