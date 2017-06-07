@@ -1,0 +1,51 @@
+body {
+font-family: 'Lato', sans-serif;
+color: #2d3c49
+}
+
+header {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.text-low {
+    font-weight: 50;
+    
+}
+
+.text-mid {
+    color: #7d97ad;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.title-super {
+    font-size: 60px;
+    margin-top: 30px;
+}
+
+.title-logo {
+	margin-top: 30px;
+    
+}
+
+.lineweight {
+    border-width: 10px;
+    border-color: #7d97ad;
+}
+
+h1, h4 {
+    text-transform: uppercase;
+}
+
+figure { 
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+img {
+    border-radius: 10px;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+}
