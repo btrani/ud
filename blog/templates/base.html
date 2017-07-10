@@ -3,16 +3,10 @@
   <head>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
-    <link href='https://fonts.googleapis.com/css?family=Lato:100,300' rel='stylesheet' type='text/css'/>
     <title>Multi-User Blog</title>
   </head>
 <body>
-  <nav class="navbar navbar-default">
-    <div class="container">
-      <div class="row">
-        <div class="navbar-header">
-          <a href="/"><h2>Multi-User Blog</h2></a>
-        </div>
+  <a href="/"><h2>Multi-User Blog</h2></a>
     <div class="login-area">
     {% if user %}
       <a class="new-post" href="/newpost">New Post</a> | 
@@ -23,11 +17,8 @@
       <a class="login-link" href="/signup">signup</a>
     {% endif %}
     </div>
-
-  <div id="content">
   {% block content %}
   {% endblock %}
-  </div>
 </body>
 </html>
 
