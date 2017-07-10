@@ -4,6 +4,7 @@ import random
 import hashlib
 import hmac
 from string import letters
+import time
 
 import webapp2
 import jinja2
@@ -65,7 +66,7 @@ def valid_pw(name, password, h):
 # Get blog key from db
 
 def blog_key(name = 'default'):
-    return db.Key.from_path('blogs', name)
+    return db.Key.from_path('Blog', name)
 
 # Get user key from db
 
@@ -179,6 +180,7 @@ class Post(db.Model):
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
+    user = db.ReferenceProperty(User, required=True, collection_name="blogs")
 
     #Make sure there are line breaks between content pieces
 
@@ -265,9 +267,9 @@ class Register(Signup):
 class Welcome(Handler):
     
     def get(self):
-        username = self.request.get('username')
-        if valid_username(username):
-            self.render('welcome.html', username = username)
+        if self.user:
+            username = self.request.get('username')
+            self.render('welcome.html', username = self.user.name)
         else:
             self.redirect('/login')
             
@@ -332,12 +334,12 @@ class UnLike(db.Model):
     
     @classmethod
     def blog_id(cls, blog_id):
-        ul = Unlike.all().filter('post =', blog_id)
+        ul = UnLike.all().filter('post =', blog_id)
         return ul.count()
     
     @classmethod
     def num_unlike(cls, blog_id, user_id):
-        cul = Unlike.all().filter('post =', blog_id).filter('user =', user_id)
+        cul = UnLike.all().filter('post =', blog_id).filter('user =', user_id)
         return cul.count()
     
 ##### Comments
@@ -349,13 +351,13 @@ class Comment(db.Model):
     comment = db.TextProperty(required=True)
     
     @classmethod
-    def blog_id(cls, blog_id):
+    def num_comments(cls, blog_id):
         cm = Comment.all().filter('post =', blog_id)
         return cm.count()
     
     @classmethod
-    def num_comments(cls, blog_id, user_id):
-        cms = Comment.all().filter('post =', blog_id).filter('user =', user_id)
+    def blog_id(cls, blog_id):
+        cms = Comment.all().filter('post =', blog_id).order('created')
         return cms
 
 ##### New posts
@@ -373,7 +375,7 @@ class NewPost(Handler):
     def post(self):
         # Get data from user input
         subject = self.request.get('subject')
-        content = self.request.get('content')
+        content = self.request.get('content').replace('\n', '<br>')
         u_id = User.by_name(self.user.name)
         
         # If we have all data write to db and redirect to new post page
@@ -383,7 +385,7 @@ class NewPost(Handler):
                      content = content,
                      user = u_id)
             p.put()
-            self.redirect('/blog/%s' % str(p.key().id()))
+            self.redirect('/post/%s' % str(p.key().id()))
         # If required data is missing print error
         else:
             error = "Please include a subject and content."
@@ -397,9 +399,9 @@ class NewPost(Handler):
 
 class PostPage(Handler):
     
-    def get(self, post_id):
+    def get(self, blog_id):
         # Retrieve post key
-        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        key = db.Key.from_path("Post", int(blog_id), parent=blog_key())
         post = db.get(key)
 
         # If that post does not exist print 404 error
@@ -420,6 +422,110 @@ class PostPage(Handler):
                     unlikes=unlikes,
                     comments=comments,
                     num_comments=num_comments)
+
+    def post(self, blog_id):
+        #Retrieve data
+        key = db.Key.from_path("Post", int(blog_id), parent=blog_key())
+        post = db.get(key)
+        user_id = User.by_name(self.user.name)
+        num_comments = Comment.num_comments(post)
+        comments = Comment.blog_id(post)
+        likes = Like.blog_id(post)
+        unlikes = UnLike.blog_id(post)
+
+        # Ensure user is logged in
+        if self.user:
+            # Click on like
+            if self.request.get("like"):
+                # Make sure the author is not the user liking the post
+                if post.user.key().id() != User.by_name(self.user.name).key().id():
+                    l = Like(post=post, user=User.by_name(self.user.name))
+                    l.put()
+                    time.sleep(0.3)
+                    self.redirect('/post/%s' % str(post.key().id()))
+                # Throw error for liking own post
+                else:
+                    error = "Sorry you cannot like your own post"
+                    self.render("post.html",
+                    post=post,
+                    likes=likes,
+                    unlikes=unlikes,
+                    comments=comments,
+                    num_comments=num_comments,
+                    error=error)
+            # Click on unlike
+            if self.request.get("unlike"):
+                # Make sure the author is not the user liking the post
+                if post.user.key().id() != User.by_name(self.user.name).key().id():
+                    ul = UnLike(post=post, user=User.by_name(self.user.name))
+                    ul.put()
+                    time.sleep(0.3)
+                    self.redirect('/post/%s' % str(post.key().id()))
+                # Throw error for unliking own post
+                else:
+                    error = "Sorry you cannot unlike your own post"
+                    self.render("post.html",
+                    post=post,
+                    likes=likes,
+                    unlikes=unlikes,
+                    comments=comments,
+                    num_comments=num_comments,
+                    error=error)
+            # Click on add comment
+            if self.request.get("add_comment"):
+                comment_text = self.request.get("comment_text")
+                # Add comment to DB if field is not empty
+                if comment_text:
+                    c = Comment(post=post, user=User.by_name(self.user.name), comment=comment_text)
+                    c.put()
+                    time.sleep(0.3)
+                    self.redirect('/post/%s' % str(post.key().id()))
+                # Throw error for having an empty text box
+                else:
+                    error = "Please make sure you enter a comment"
+                    self.render("post.html",
+                    post=post,
+                    likes=likes,
+                    unlikes=unlikes,
+                    comments=comments,
+                    num_comments=num_comments,
+                    error=error)
+            # Click on edit post
+            if self.request.get("edit"):
+                # Make sure the author is the same user and redirect to edit page
+                if post.user.key().id() == User.by_name(self.user.name).key().id():
+                    self.redirect('/edit/%s' % str(post.key().id()))
+                # Throw error for if not author
+                else:
+                    error = "Sorry you can only edit your own posts"
+                    self.render("post.html",
+                    post=post,
+                    likes=likes,
+                    unlikes=unlikes,
+                    comments=comments,
+                    num_comments=num_comments,
+                    error=error)
+            # Click on delete post
+            if self.request.get("delete"):
+                # Make sure the author is the same user
+                if post.user.key().id() == User.by_name(self.user.name).key().id():
+                    db.delete(key)
+                    time.sleep(0.3)
+                    self.redirect('/')
+                # Throw error for if not author
+                else:
+                    error = "Sorry you can only delete your own posts"
+                    self.render("post.html",
+                    post=post,
+                    likes=likes,
+                    unlikes=unlikes,
+                    comments=comments,
+                    num_comments=num_comments,
+                    error=error)
+        else:
+            self.redirect("/login")
+
+
 ##### Edit post
 
 class EditPost(Handler):
@@ -453,6 +559,7 @@ class EditPost(Handler):
                     post.subject = subject
                     post.content = content
                     post.put()
+                    time.sleep(0.3)
                     self.redirect('/post/%s' % str(post.key().id()))
                 else:
                     error = 'Subject and text are required.'
@@ -479,7 +586,7 @@ class EditComment(Handler):
         # Check that user created that comment
         if comment.user.name == self.user.name:
             # Allow user to edit comment
-            self.render('editcomment.html', comment_text=comment.text)
+            self.render('editcomment.html', comment_text=comment.comment)
         else:
             error = "Only the creator of the comment can edit this."
             self.render('editcomment.html', error = error)
@@ -491,13 +598,20 @@ class EditComment(Handler):
             # Check that user created that comment
             if comment.user.name == self.user.name:
             # Update comment data in db
-                comment.text = self.request.get('comment_text')
-                comment.put()
-                self.redirect('/post/%s' % str(post_id))
+                comment.comment = self.request.get('comment_text')
+                if comment.comment:
+                    comment.put()
+                    time.sleep(0.3)
+                    self.redirect('/post/%s' % str(post_id))
+                else:
+                    error = "Comments cannot be blank"
+                    self.render('editcomment.html',
+                        comment=comment.comment,
+                        error=error)
             else:
                 error = "Only the creator of the comment can edit this."
                 self.render('editcomment.html',
-                            comment=comment.text,
+                            comment=comment.comment,
                             error = error)   
         elif self.request.get("cancel"):
             self.redirect('/post/%s' % str(post_id))
@@ -513,6 +627,7 @@ class DeleteComment(Handler):
         if comment.user.name == self.user.name:
             # Delete comment from db and send to post page
             db.delete(comment)
+            time.sleep(0.3)
             self.redirect('/post/%s' % str(post_id))
         else:
             self.write("Only the creator of the comment can delete this.")

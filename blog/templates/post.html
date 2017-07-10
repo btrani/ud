@@ -1,15 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
 <div class="post">
   <div class="post-heading">
     <div class="post-title">
-      {{p.subject}}
+      {{post.subject}}
     </div>
-
     <div class="post-date">
-      {{p.created.strftime("%b %d, %Y")}}
+      {{post.created.strftime("%b %d, %Y")}}
     </div>
   </div>
-
   <div class="post-content">
-    {{p._render_text | safe}}
+    {{post.content | safe}}
   </div>
+  {% if user %}
+    <form method="POST">
+      <input type="submit" class="btn btn-success" name="like"; value='{{likes}} likes'>
+      <input type="submit" class="btn btn-warning" name="unlike"; value='{{unlikes}} unlikes'>
+      <input type="submit" class="btn btn-info" name="edit"; value='edit'>
+      <input type="submit" class="btn btn-danger" name="delete"; value='delete'>
+    </form>
+    <div class="alert-warning">{{error}}</div>
+  {% endif %}
+<label>{{num_comments}} comment(s)</label>
+{% for comment in comments %}
+  {{comment.comment}}
+  By {{comment.user.name}} on {{comment.created.strftime("%b %d, %Y")}}
+  {% if comment.user.name == user.name %}
+    <a style="color:red" href="/blog/{{post.key().id()}}/editcomment/{{comment.key().id()}}">edit</a> |
+    <a style="color:red" href="/blog/{{post.key().id()}}/deletecomment/{{comment.key().id()}}">delete</a>
+  {% endif %}
+{% endfor %}
+{% if user %}
+  <form method="POST">
+    <label>
+      Create Comment
+      <textarea class="form-control" name="comment_text">{{comment_text | safe}}</textarea>
+    </label>
+    <input type="submit" class="btn btn-success" name="add_comment"; value="Post Comment">
+  </form>
+{% endif %}
 </div>
+{% endblock %}

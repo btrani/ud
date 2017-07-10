@@ -30,6 +30,11 @@ body {
     text-decoration: underline;
 }
 
+.new-post {
+    color: gray;
+    text-decoration: none;
+}
+
 h2 {
     font-size: 24px;
     font-weight: bold;
